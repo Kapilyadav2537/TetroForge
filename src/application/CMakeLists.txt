@@ -1,0 +1,5 @@
+# SRS: §7.1 (Application sits above Core; dependencies point downward only)
+add_library(tf_application STATIC src/LayerInfo.cpp)
+add_library(tf::application ALIAS tf_application)
+target_include_directories(tf_application PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_link_libraries(tf_application PUBLIC tf_core)

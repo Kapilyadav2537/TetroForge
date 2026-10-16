@@ -1,0 +1,14 @@
+# SRS: NFR-7 (style)
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+AccessModifierOffset: -4
+PointerAlignment: Left
+SpacesBeforeTrailingComments: 2
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+FixNamespaceComments: true
+NamespaceIndentation: None
+IncludeBlocks: Preserve
+SortIncludes: false        # include order is written by hand: own header, std, project

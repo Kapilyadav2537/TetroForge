@@ -1,0 +1,40 @@
+# SRS: NFR-7 (clang-tidy clean). "Functions under 40 lines" is enforced by
+# readability-function-size below.
+# Disabled checks (each one noisy or wrong for this code base):
+#  - magic-numbers: shape and kick tables ARE numbers
+#  - identifier-length: x, y, dx are the right names for coordinates
+#  - easily-swappable-parameters: (int x, int y) is the natural signature
+#  - pro-bounds-constant-array-index: we bounds-check through Grid instead of gsl::at
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-identifier-length,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-pro-bounds-constant-array-index
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*/src/.*'
+FormatStyle: file
+CheckOptions:
+  - { key: readability-function-size.LineThreshold,            value: '40' }
+  - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: 'true' }
+  - { key: readability-identifier-naming.NamespaceCase,        value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,            value: CamelCase }
+  - { key: readability-identifier-naming.StructCase,           value: CamelCase }
+  - { key: readability-identifier-naming.EnumCase,             value: CamelCase }
+  - { key: readability-identifier-naming.EnumConstantCase,     value: CamelCase }
+  - { key: readability-identifier-naming.FunctionCase,         value: camelBack }
+  - { key: readability-identifier-naming.VariableCase,         value: camelBack }
+  - { key: readability-identifier-naming.PrivateMemberSuffix,  value: _ }
+  - { key: readability-identifier-naming.ConstexprVariablePrefix, value: k }
+  - { key: readability-identifier-naming.ConstexprVariableCase,   value: CamelCase }

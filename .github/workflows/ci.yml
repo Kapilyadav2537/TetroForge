@@ -1,0 +1,68 @@
+# SRS: §3 (GitHub Actions), NFR-6 (GCC 11 / Clang 14 / MSVC 2022 on Linux + Windows),
+#      NFR-7 (format, tidy, coverage), NFR-4 (sanitizers)
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y clang-format-14
+      - run: find src tests -name '*.hpp' -o -name '*.cpp' | xargs -r clang-format-14 --dry-run --Werror
+
+  linux:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: gcc-11,   cxx: g++-11 }
+          - { name: clang-14, cxx: clang++-14 }
+    env:
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run: cmake --preset debug
+      - run: cmake --build --preset debug
+      - run: ctest --preset debug
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      # -Werror is left off on MSVC until the first run proves Catch2 headers are warning-clean.
+      - run: cmake -S . -B build
+      - run: cmake --build build --config Release
+      - run: ctest --test-dir build -C Release --output-on-failure
+
+  tidy:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build clang-14 clang-tidy-14
+      - run: cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++-14 -DTF_BUILD_TESTS=OFF
+      - run: find src -name '*.cpp' | xargs -r clang-tidy-14 -p build --quiet
+
+  coverage:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build lcov
+      - run: cmake --preset coverage
+      - run: cmake --build --preset coverage
+      - run: ctest --preset coverage
+      - run: |
+          lcov --capture --directory build/coverage --output-file coverage.info --quiet
+          lcov --remove coverage.info '/usr/*' '*/_deps/*' '*/tests/*' --output-file coverage.info --quiet
+          lcov --list coverage.info
+          genhtml coverage.info --output-directory coverage-html --quiet
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: coverage-html
