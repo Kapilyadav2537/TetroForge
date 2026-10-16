@@ -1,10 +1,12 @@
 #pragma once
 /**
  * @file Tetromino.hpp
- * @brief Abstract base class of the seven pieces.
- * @note SRS: FR-1.2 (each piece a class derived from Tetromino), FR-1.4 (kick tables),
- *       §7.2 (Tetromino), §7.5 (Prototype via clone()), §7.6 (abstraction, runtime
- *       polymorphism, encapsulation).
+ * @brief Abstract base class representing a generic tetromino piece.
+ *
+ * Design Patterns & Principles:
+ * - Abstraction: Exposes pure virtual methods for shape geometry and SRS wall-kicks.
+ * - Prototype Pattern: Polymorphic cloning via clone() for ghost pieces and hold queue.
+ * - Encapsulation: Protected constructors prevent object slicing.
  */
 #include <array>
 #include <memory>

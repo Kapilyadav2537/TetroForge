@@ -1,5 +1,5 @@
-# SRS: §2.5 (Core must not include SFML or third-party libraries), §7.1 (layering),
-#      NFR-3 (determinism: no wall-clock, no non-portable <random> pieces)
+# Architectural layering validation: ensures Core remains pure C++17 without GUI,
+# third-party headers, or non-deterministic platform clocks/randomness.
 #
 # Usage: cmake -DCORE_DIR=<path to src/core> -P CheckLayering.cmake
 # Exits non-zero (so CTest fails) if any Core file matches a forbidden pattern.

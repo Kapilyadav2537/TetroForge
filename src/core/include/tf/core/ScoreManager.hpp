@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file ScoreManager.hpp
- * @brief High-score tracking and file persistence.
- * @note SRS: FR-4.1, FR-4.2, §6.1, §6.2 (ScoreManager, ScoreFileError), §6.4.
+ * @brief High-score tracking, ranking, and flat-file persistence.
  */
 #include <stdexcept>
 #include <string>
@@ -11,53 +10,70 @@
 namespace tf::core {
 
 /**
- * @brief Exception thrown when highscores.txt cannot be read, parsed or written.
+ * @brief Exception thrown when score file operations (open, read, parse, write) fail.
  */
 class ScoreFileError : public std::runtime_error {
 public:
-    /** @brief Constructs a score file error with an explanatory message. */
     explicit ScoreFileError(const std::string& message) : std::runtime_error(message) {}
 };
 
 /**
- * @brief Manages the top 5 high scores with file persistence.
+ * @brief Manages the leaderboard of top 5 scores with persistence to disk.
  */
 class ScoreManager {
 public:
-    /** @brief Constructs a score manager using the specified file path. */
+    /**
+     * @brief Constructs a score manager targeting the specified file path.
+     * @param filePath Path to the score persistence file (defaults to "highscores.txt").
+     */
     explicit ScoreManager(std::string filePath = "highscores.txt");
 
     /**
-     * @brief Loads the top 5 scores from the file.
-     * @throws ScoreFileError if the file exists but contains invalid or corrupt data.
+     * @brief Loads and parses scores from disk into the top-5 list.
+     * A non-existent file is treated as an empty leaderboard.
+     * @throws ScoreFileError if the file contains invalid or corrupt numeric data.
      */
     void load();
 
     /**
-     * @brief Saves the current top 5 scores to the file.
-     * @throws ScoreFileError if writing to the file fails.
+     * @brief Writes the current top-5 scores to disk in descending order.
+     * @throws ScoreFileError if writing to the target file fails.
      */
     void save() const;
 
     /**
-     * @brief Submits a score and inserts it into the top 5 if high enough.
-     * @return true if the score made it into the top 5.
+     * @brief Submits a candidate score to the leaderboard.
+     * Inserts the score and keeps the top 5 highest entries.
+     * @param score Positive score value to submit.
+     * @return true if the score qualified for the top 5; false otherwise.
      */
     bool submit(int score);
 
-    /** @brief Returns true if the score exceeds the current #1 score. */
+    /**
+     * @brief Checks if a score strictly exceeds the current all-time #1 score.
+     * @param score Candidate score to test.
+     * @return true if score is greater than current top score or if list is empty.
+     */
     [[nodiscard]] bool isNewHighScore(int score) const noexcept;
 
-    /** @brief Returns the top 5 scores in descending order. */
+    /**
+     * @brief Returns the top scores in descending order (maximum 5 items).
+     */
     [[nodiscard]] const std::vector<int>& top5() const noexcept { return scores_; }
 
-    /** @brief Clears all currently loaded scores. */
+    /**
+     * @brief Clears in-memory scores.
+     */
     void clear() noexcept { scores_.clear(); }
 
-    /** @brief Returns the configured file path. */
+    /**
+     * @brief Returns the configured file path.
+     */
     [[nodiscard]] const std::string& filePath() const noexcept { return filePath_; }
 
-    /** @brief Sets a new file path for loading and saving. */
+    /**
+     * @brief Reconfigures the persistence file path.
+     */
     void setFilePath(std::string filePath) { filePath_ = std::move(filePath); }
 
 private:

@@ -1,4 +1,3 @@
-/** @file SFMLRenderer.cpp  @note SRS: §6.2 (SFMLRenderer). */
 #include <tf/ui/SFMLRenderer.hpp>
 
 #include <algorithm>
@@ -154,6 +153,7 @@ void SFMLRenderer::drawText(std::string_view text, float x, float y, unsigned in
 }
 
 void SFMLRenderer::drawBoard(const core::Board& board) {
+    // Step 1: Draw the 10x20 playfield background receptacle and outer border.
     sf::RectangleShape boardBg(sf::Vector2f{static_cast<float>(core::kBoardWidth) * kCell,
                                             static_cast<float>(core::kVisibleHeight) * kCell});
     boardBg.setPosition(kBoardX, kBoardY);
@@ -162,10 +162,12 @@ void SFMLRenderer::drawBoard(const core::Board& board) {
     boardBg.setOutlineColor(kBorder);
     window_.draw(boardBg);
 
+    // Step 2: Iterate through all cells in the visible playfield [0..9] x [0..19].
     for (int y = 0; y < core::kVisibleHeight; ++y) {
         for (int x = 0; x < core::kBoardWidth; ++x) {
             const core::Cell cell = board.cellAt(x, y);
             if (cell != core::Cell::Empty) {
+                // Step 3: Map board (x, y) to window screen coordinates (inverting Y because row 0 is floor).
                 sf::RectangleShape block({kCell - 2.0F, kCell - 2.0F});
                 block.setPosition(kBoardX + static_cast<float>(x) * kCell + 1.0F,
                                   kBoardY + static_cast<float>(core::kVisibleHeight - 1 - y) * kCell + 1.0F);
@@ -177,11 +179,14 @@ void SFMLRenderer::drawBoard(const core::Board& board) {
 }
 
 void SFMLRenderer::drawPiece(const core::Tetromino& piece, bool isGhost) {
+    // Step 1: Select color palette entry (ghost pieces render with translucent alpha fill).
     const sf::Color color = isGhost
                                 ? sf::Color{105, 115, 135, 90}
                                 : kColors[static_cast<std::size_t>(core::toCell(piece.type()))];
 
+    // Step 2: Render each of the 4 constituent blocks.
     for (const core::Vec2i cell : piece.worldCells()) {
+        // Skip hidden upper buffer rows (y >= 20).
         if (cell.y < 0 || cell.y >= core::kVisibleHeight || cell.x < 0 || cell.x >= core::kBoardWidth) {
             continue;
         }
@@ -199,9 +204,10 @@ void SFMLRenderer::drawPiece(const core::Tetromino& piece, bool isGhost) {
 
 void SFMLRenderer::drawHud(int score, int level, int lines, const core::Tetromino& nextPiece,
                            const core::Tetromino* heldPiece, bool canHold) {
+    // Step 1: Draw title branding header.
     drawText("TETROFORGE", 120.0F, 24.0F, 28U, kTextWhite);
 
-    // Hold piece box (left side of the board)
+    // Step 2: Draw Hold Chamber box on the left margin.
     constexpr float kHoldX = 14.0F;
     constexpr float kHoldY = 96.0F;
     drawText("HOLD", kHoldX, kHoldY, 18U, kTextDim);
@@ -213,6 +219,7 @@ void SFMLRenderer::drawHud(int score, int level, int lines, const core::Tetromin
     holdBox.setOutlineColor(kBorder);
     window_.draw(holdBox);
 
+    // Step 3: Draw held piece inside the chamber if one has been held.
     if (heldPiece != nullptr) {
         constexpr float kHoldCell = 18.0F;
         const float holdOriginX = (heldPiece->type() == core::PieceType::O || heldPiece->type() == core::PieceType::I)
@@ -222,6 +229,7 @@ void SFMLRenderer::drawHud(int score, int level, int lines, const core::Tetromin
                                       ? kHoldY + 40.0F
                                       : kHoldY + 48.0F;
 
+        // Gray out if hold cannot be used again this turn.
         const sf::Color holdColor = canHold
                                         ? kColors[static_cast<std::size_t>(core::toCell(heldPiece->type()))]
                                         : sf::Color{100, 105, 115, 160};
@@ -236,7 +244,7 @@ void SFMLRenderer::drawHud(int score, int level, int lines, const core::Tetromin
     }
     drawText("[C] HOLD", kHoldX, kHoldY + 130.0F, 12U, kTextDim);
 
-    // Next piece box
+    // Step 4: Draw Next Piece Preview box on the right sidebar.
     constexpr float kNextX = 450.0F;
     constexpr float kNextY = 96.0F;
     drawText("NEXT", kNextX, kNextY, 18U, kTextDim);

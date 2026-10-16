@@ -1,6 +1,4 @@
-# SRS: §2.1, §2.5, §7.1 (Core is pure C++17), NFR-3
-# Core links NOTHING except tf_options (compiler flags). External/GUI
-# include paths are never visible here, so a stray #include fails to compile.
+# Core domain library (pure C++17 domain logic, zero GUI or external dependencies)
 add_library(tf_core STATIC
   src/Vec2i.cpp
   src/Tetromino.cpp

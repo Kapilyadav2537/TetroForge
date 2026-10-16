@@ -2,7 +2,6 @@
 /**
  * @file IScreenHost.hpp
  * @brief Host interface providing screen switching and shared application services.
- * @note SRS: §6.2 (Application, Screens), §6.5, §6.6 (Screen flow).
  */
 #include <memory>
 
@@ -16,22 +15,31 @@ class Screen;
 class SoundPlayer;
 
 /**
- * @brief Interface implemented by Application to host Screens.
+ * @brief Host context interface implemented by Application.
+ * Allows active screens to request state transitions, play audio, and access scores.
  */
 class IScreenHost {
 public:
     virtual ~IScreenHost() = default;
 
-    /** @brief Requests a transition to the next screen. */
+    /**
+     * @brief Requests deferred transition to a new screen.
+     */
     virtual void changeScreen(std::unique_ptr<Screen> nextScreen) = 0;
 
-    /** @brief Requests application termination. */
+    /**
+     * @brief Signals the application to cleanly shut down and close window.
+     */
     virtual void requestQuit() = 0;
 
-    /** @brief Returns a reference to the application's score manager. */
+    /**
+     * @brief Provides access to the application-wide score leaderboard manager.
+     */
     [[nodiscard]] virtual core::ScoreManager& scoreManager() noexcept = 0;
 
-    /** @brief Returns a reference to the audio player for sound effects. */
+    /**
+     * @brief Provides access to the procedural audio synthesizer.
+     */
     [[nodiscard]] virtual SoundPlayer& soundPlayer() noexcept = 0;
 };
 

@@ -1,11 +1,12 @@
 #pragma once
 /**
  * @file Vec2i.hpp
- * @brief 2D integer coordinate with overloaded operators.
- * @note SRS: §7.2 (Vec2i), §7.6 (operator overloading), NFR-3 (integers only).
+ * @brief 2D integer vector primitive with complete operator overloading.
  *
- * Coordinate convention used everywhere in Core: x grows to the right and
- * y grows UPWARD (row 0 is the floor). This matches the published SRS kick tables.
+ * Cartesian coordinate convention used throughout Core:
+ * - x axis: Increases horizontally to the right (column 0 is leftmost).
+ * - y axis: Increases vertically UPWARD (row 0 is the floor).
+ * This convention matches the standard mathematical Tetris SRS specification.
  */
 #include <iosfwd>
 

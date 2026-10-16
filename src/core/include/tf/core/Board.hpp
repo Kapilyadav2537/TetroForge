@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file Board.hpp
- * @brief The playfield: collision checks, locking pieces, clearing lines.
- * @note SRS: FR-1.1, FR-1.4, FR-1.9, §7.2 (Board), §7.6 (encapsulation: the grid is private).
+ * @brief Playfield representation: grid geometry, collision detection, piece locking, and line clearing.
  */
 #include <tf/core/Grid.hpp>
 #include <tf/core/Tetromino.hpp>
@@ -11,45 +10,62 @@
 namespace tf::core {
 
 /**
- * @brief 10 columns x 40 rows (20 visible + 20 hidden). Row 0 is the floor.
+ * @brief 10-column by 40-row playfield matrix (20 visible lower rows, 20 upper buffer rows).
+ * Row index 0 represents the floor; row 39 is the top buffer ceiling.
  *
- * Board knows geometry only. It does not know about score, levels or time.
+ * Encapsulation: The underlying 2D grid storage is strictly private. External classes
+ * query state through collision checks and line clearing operations.
  */
 class Board {
 public:
-    /** @brief True if all four cells of @p piece are in bounds and empty. */
+    /**
+     * @brief Checks if a piece can be placed at its current position and orientation.
+     * @return true if all four cells are in-bounds and on unoccupied cells.
+     */
     [[nodiscard]] bool canPlace(const Tetromino& piece) const;
 
-    /** @brief Same test for a hypothetical origin and rotation (piece is not changed). */
+    /**
+     * @brief Checks if a piece could be placed at an arbitrary hypothetical origin and rotation.
+     * Does not mutate the piece.
+     */
     [[nodiscard]] bool canPlace(const Tetromino& piece, Vec2i origin, Rotation rotation) const;
 
     /**
-     * @brief Rotates @p piece with SRS wall kicks (FR-1.4).
-     * Tries each kick offset in order; the first that fits is applied.
-     * @return true if rotated; false if all five tests collide (piece unchanged).
+     * @brief Attempts to rotate a piece using Super Rotation System (SRS) wall kick offsets.
+     * Evaluates up to 5 kick test offsets. The first offset without collisions is applied.
+     * @param piece Tetromino to rotate and translate.
+     * @param spin Direction of rotation (Clockwise or CounterClockwise).
+     * @return true if rotation succeeded, false if all 5 kick tests failed (piece unchanged).
      */
     [[nodiscard]] bool tryRotate(Tetromino& piece, Spin spin) const;
 
     /**
-     * @brief Writes the piece's cells into the grid.
-     * @throws std::logic_error if the piece does not fit (caller bug).
-     * Does not clear lines; call clearLines() afterwards.
+     * @brief Commits a tetromino's cells permanently into the grid matrix.
+     * @param piece Tetromino in a valid placement position.
+     * @throws std::logic_error if the piece collides or is out of bounds.
      */
     void lock(const Tetromino& piece);
 
     /**
-     * @brief Removes every full row; rows above fall down (FR-1.9).
-     * @return Number of rows removed (0 to 4 in normal play).
+     * @brief Scans for full rows, removes them, and drops rows above downwards.
+     * @return Total number of lines cleared (0 to 4 in standard play).
      */
     [[nodiscard]] int clearLines();
 
-    /** @brief Cell content at (x, y). @throws std::out_of_range if outside the board. */
+    /**
+     * @brief Retrieves the cell content at matrix coordinate (x, y).
+     * @throws std::out_of_range if coordinate is outside [0..9] x [0..39].
+     */
     [[nodiscard]] Cell cellAt(int x, int y) const;
 
-    /** @brief True if every cell of row @p y is filled. @throws std::out_of_range. */
+    /**
+     * @brief Checks whether an entire horizontal row is filled with solid blocks.
+     */
     [[nodiscard]] bool isRowFull(int y) const;
 
-    /** @brief Empties the whole board. */
+    /**
+     * @brief Clears the entire board, resetting all cells to empty.
+     */
     void clear();
 
 private:

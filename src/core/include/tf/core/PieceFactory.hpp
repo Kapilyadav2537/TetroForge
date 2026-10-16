@@ -1,8 +1,10 @@
 #pragma once
 /**
  * @file PieceFactory.hpp
- * @brief Creates pieces by type so client code needs no switch statement.
- * @note SRS: §7.2 (PieceFactory), §7.5 (Factory pattern), FR-1.2.
+ * @brief Factory Method pattern for instantiating concrete Tetromino pieces.
+ *
+ * Encapsulates object creation so external code does not require knowledge
+ * of concrete piece subclasses, returning polymorphic std::unique_ptr<Tetromino>.
  */
 #include <memory>
 

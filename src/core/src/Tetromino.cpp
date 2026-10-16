@@ -1,4 +1,7 @@
-/** @file Tetromino.cpp  @note SRS: FR-1.2, §7.2. */
+/**
+ * @file Tetromino.cpp
+ * @brief Implements coordinate translation from local piece space to board space.
+ */
 #include <tf/core/Tetromino.hpp>
 
 namespace tf::core {
@@ -11,7 +14,10 @@ CellArray Tetromino::worldCells() const {
 }
 
 CellArray Tetromino::worldCells(Vec2i origin, Rotation rotation) const {
-    CellArray result = cells(rotation);  // virtual call: shape comes from the subclass
+    // Step 1: Retrieve the 4 in-box cell offsets for this rotation from the concrete subclass.
+    CellArray result = cells(rotation);
+
+    // Step 2: Translate each local offset by adding the world origin coordinates.
     for (Vec2i& cell : result) {
         cell = cell + origin;
     }

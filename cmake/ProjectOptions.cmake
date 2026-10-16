@@ -1,8 +1,7 @@
-# SRS: NFR-4/NFR-5 (sanitizers), NFR-6 (GCC 11+/Clang 14+/MSVC 2022),
-#      NFR-7 (warnings clean, coverage)
+# Compiler flags, sanitizers, and diagnostic options configuration.
 #
 # One INTERFACE library carries every compiler/linker flag. Targets link it,
-# so flags are defined once and applied uniformly.
+# so flags are defined once and applied uniformly across all targets.
 add_library(tf_options INTERFACE)
 
 if(MSVC)

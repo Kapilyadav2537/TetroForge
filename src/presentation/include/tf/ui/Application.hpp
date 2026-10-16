@@ -2,7 +2,6 @@
 /**
  * @file Application.hpp
  * @brief Main application coordinator and SFML window lifecycle owner.
- * @note SRS: §6.2 (Application), §6.3, §6.4, §6.5 (game loop).
  */
 #include <memory>
 
@@ -17,29 +16,45 @@
 namespace tf::ui {
 
 /**
- * @brief Application class owning the window, renderer, and active Screen.
+ * @brief Top-level application coordinator managing the SFML window, screen stack,
+ * audio subsystem, and persistent high scores.
  */
 class Application final : public IScreenHost {
 public:
-    /** @brief Constructs a new Application instance. */
+    /**
+     * @brief Constructs Application instance and prepares subsystems.
+     */
     Application();
 
-    /** @brief Cleans up Application resources. */
+    /**
+     * @brief Cleans up Application resources upon shutdown.
+     */
     ~Application() override;
 
-    /** @brief Opens the window and runs the main event and rendering loop. */
+    /**
+     * @brief Opens the main render window and executes the primary game loop.
+     * @return Process exit code (0 on normal termination).
+     */
     int run();
 
-    /** @brief Switches the active screen to @p nextScreen. */
+    /**
+     * @brief Queues a screen transition to take effect at the start of the next frame.
+     */
     void changeScreen(std::unique_ptr<Screen> nextScreen) override;
 
-    /** @brief Requests application termination. */
+    /**
+     * @brief Requests clean termination of the application loop.
+     */
     void requestQuit() override;
 
-    /** @brief Returns reference to application score manager. */
+    /**
+     * @brief Accessor for the persistent high-score manager.
+     */
     [[nodiscard]] core::ScoreManager& scoreManager() noexcept override { return scoreManager_; }
 
-    /** @brief Returns reference to application sound player. */
+    /**
+     * @brief Accessor for the procedural audio synthesizer.
+     */
     [[nodiscard]] SoundPlayer& soundPlayer() noexcept override { return soundPlayer_; }
 
 private:

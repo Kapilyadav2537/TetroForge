@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file HighScoreScreen.hpp
- * @brief High-score screen listing the top 5 scores.
- * @note SRS: FR-3.4, §6.2 (HighScoreScreen), §6.3, §6.6.
+ * @brief High-score leaderboard screen presenting the top 5 scores.
  */
 #include <tf/ui/IScreenHost.hpp>
 #include <tf/ui/Screen.hpp>
@@ -10,20 +9,28 @@
 namespace tf::ui {
 
 /**
- * @brief Screen displaying the top 5 recorded high scores.
+ * @brief Screen displaying the top 5 recorded scores from persistent storage.
  */
 class HighScoreScreen final : public Screen {
 public:
-    /** @brief Constructs a high score screen attached to @p host. */
+    /**
+     * @brief Constructs a high score screen attached to the application host.
+     */
     explicit HighScoreScreen(IScreenHost& host);
 
-    /** @brief Handles return to menu upon Escape, Enter or click. */
+    /**
+     * @brief Returns to the main menu upon Escape, Enter, Space, M, or mouse click.
+     */
     void handleEvent(const sf::Event& event) override;
 
-    /** @brief Updates screen. */
+    /**
+     * @brief Frame update hook (unused for static leaderboard screen).
+     */
     void update(float dt) override;
 
-    /** @brief Renders the top 5 high scores table. */
+    /**
+     * @brief Renders the high-scores table.
+     */
     void draw(IRenderer& renderer) override;
 
 private:

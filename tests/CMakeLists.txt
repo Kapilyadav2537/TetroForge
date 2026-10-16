@@ -1,4 +1,4 @@
-# SRS: NFR-7 (Catch2 tests), §2.5 / §7.1 (layering enforced as a test)
+# Catch2 test suite and architectural layering check
 add_executable(tf_tests
   test_layers.cpp
   test_vec2i.cpp

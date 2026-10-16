@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file SoundPlayer.hpp
- * @brief Sound effects for gameplay events.
- * @note SRS: FR-3.5 (sound effects for rotate, lock, line clear, game over).
+ * @brief Procedural sound effect synthesizer and playback engine.
  */
 #include <array>
 #include <cstdint>
@@ -14,7 +13,9 @@
 
 namespace tf::ui {
 
-/** @brief Sound effect types supported by the game. */
+/**
+ * @brief Categorical sound effect cues used across the gameplay experience.
+ */
 enum class SoundEffect : std::uint8_t {
     Rotate,
     Lock,
@@ -23,26 +24,39 @@ enum class SoundEffect : std::uint8_t {
 };
 
 /**
- * @brief Synthesizes and plays sound effects for the game.
+ * @brief Procedural audio engine synthesizing sound effects in-memory using PCM sine wave mathematics.
+ * Requires no external audio files or dependencies on disk.
  */
 class SoundPlayer {
 public:
-    /** @brief Constructs a default sound player. */
+    /**
+     * @brief Constructs default uninitialized sound player.
+     */
     SoundPlayer();
 
-    /** @brief Destroys the sound player. */
+    /**
+     * @brief Default destructor.
+     */
     ~SoundPlayer() = default;
 
-    /** @brief Initializes synthesized audio buffers. */
+    /**
+     * @brief Synthesizes PCM audio sample buffers for all sound effect cues.
+     */
     void init();
 
-    /** @brief Plays the specified sound effect. */
+    /**
+     * @brief Plays the requested sound effect cue.
+     */
     void play(SoundEffect effect);
 
-    /** @brief Sets whether audio playback is muted. */
+    /**
+     * @brief Mutes or un-mutes audio playback.
+     */
     void setMuted(bool muted) noexcept { muted_ = muted; }
 
-    /** @brief Returns true if audio playback is currently muted. */
+    /**
+     * @brief Returns true if audio playback is currently muted.
+     */
     [[nodiscard]] bool isMuted() const noexcept { return muted_; }
 
 private:

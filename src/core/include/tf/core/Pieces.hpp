@@ -1,11 +1,10 @@
 #pragma once
 /**
  * @file Pieces.hpp
- * @brief The seven concrete tetromino classes.
- * @note SRS: FR-1.2, FR-1.4, §7.2 (IPiece ... LPiece), §7.6 (inheritance).
+ * @brief Concrete implementations of the seven standard tetromino shapes.
  *
- * Each class only supplies shape and kick data (tables live in Pieces.cpp).
- * J, L, S, T and Z share one kick table; I has its own; O never needs kicks.
+ * Implements I, O, T, S, Z, J, and L pieces as subclasses of Tetromino.
+ * Each class provides its specific 4-state rotation cell offsets and SRS kick offsets.
  */
 #include <memory>
 

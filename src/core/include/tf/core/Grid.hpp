@@ -1,8 +1,12 @@
 #pragma once
 /**
  * @file Grid.hpp
- * @brief Fixed-size 2D container with bounds-checked access.
- * @note SRS: §7.2 (Grid<T>), §7.6 (compile-time polymorphism, operator overloading).
+ * @brief Generic fixed-size 2D contiguous grid container with bounds validation.
+ *
+ * Characteristics:
+ * - Stack-allocated using std::array: Zero heap allocations during gameplay.
+ * - Flat contiguous memory: Row-major storage with O(1) index calculation.
+ * - Strict bounds checking: Prevents out-of-bounds access with std::out_of_range.
  */
 #include <array>
 #include <cstddef>
@@ -11,12 +15,10 @@
 namespace tf::core {
 
 /**
- * @brief A Width x Height grid stored contiguously (row-major, row 0 first).
- * @tparam T      Element type; must be default-constructible.
- * @tparam Width  Number of columns (> 0).
- * @tparam Height Number of rows (> 0).
- *
- * Size is a template parameter, so the grid lives inside its owner with no heap use.
+ * @brief Fixed-size Width x Height 2D grid.
+ * @tparam T      Contained element type (default constructible).
+ * @tparam Width  Grid column count (must be > 0).
+ * @tparam Height Grid row count (must be > 0).
  */
 template <typename T, int Width, int Height>
 class Grid {

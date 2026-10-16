@@ -1,13 +1,15 @@
 /**
  * @file Pieces.cpp
- * @brief Shape and kick data for the seven pieces.
- * @note SRS: FR-1.2, FR-1.4, §7.6 (constexpr shape tables), NFR-3 (integers only).
+ * @brief Shape definitions and Super Rotation System (SRS) kick offset tables.
  *
- * Coordinates: x right, y UP, origin = bottom-left of the piece's bounding box.
- * Only the Spawn shape is typed in by hand. The other three rotations are
- * generated at compile time with the rule  (x, y) -> (y, boxSize - 1 - x),
- * which is a clockwise quarter turn inside the box.
- * Kick data is from the published SRS tables (Tetris Guideline / Tetris Wiki).
+ * Rotation Generation:
+ * - Only the initial Spawn shape is manually defined.
+ * - Clockwise rotation transformation rule inside bounding box: (x, y) -> (y, boxSize - 1 - x).
+ * - All 4 rotation states are derived at compile-time via makeRotations().
+ *
+ * Kick Offsets:
+ * - When a rotation collides, 5 sequential offset tests are attempted.
+ * - JLSTZ share the common 3x3 table; I uses the 4x4 bar table; O does not move.
  */
 #include <tf/core/Pieces.hpp>
 

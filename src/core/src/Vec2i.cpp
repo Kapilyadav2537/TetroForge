@@ -1,4 +1,7 @@
-/** @file Vec2i.cpp  @note SRS: §7.6 (operator overloading). */
+/**
+ * @file Vec2i.cpp
+ * @brief Implements text streaming for 2D vectors in format (x, y).
+ */
 #include <tf/core/Vec2i.hpp>
 
 #include <ostream>

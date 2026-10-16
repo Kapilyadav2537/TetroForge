@@ -1,4 +1,4 @@
-# SRS: §6.1, §6.2, §7.1 (Presentation is the top layer; SFML belongs here only).
+# Presentation UI layer (owns SFML window, screen stack, audio, and renderer)
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 find_package(SFML 2.5 COMPONENTS audio QUIET)
 

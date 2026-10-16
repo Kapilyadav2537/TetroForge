@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file LayerInfo.hpp
- * @brief Scaffolding for the Presentation layer (removed in Week 5 with real UI code).
- * @note SRS: §7.1.
+ * @brief Architectural metadata for the Presentation layer.
  */
 #include <string>
 #include <string_view>

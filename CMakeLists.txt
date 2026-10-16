@@ -1,4 +1,4 @@
-# SRS: NFR-6 (portability), NFR-7 (maintainability), §2.5 (C++17, CMake build)
+# TetroForge top-level CMake build configuration
 cmake_minimum_required(VERSION 3.20)
 project(TetroForge VERSION 0.1.0
         DESCRIPTION "Tetris-style puzzle game with a custom UI toolkit"

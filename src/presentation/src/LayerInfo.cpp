@@ -1,4 +1,7 @@
-/** @file LayerInfo.cpp  @note SRS: §7.1. Scaffolding. */
+/**
+ * @file LayerInfo.cpp
+ * @brief Reports Presentation layer identification and hierarchical layer stack.
+ */
 #include <tf/ui/LayerInfo.hpp>
 
 #include <tf/app/LayerInfo.hpp>

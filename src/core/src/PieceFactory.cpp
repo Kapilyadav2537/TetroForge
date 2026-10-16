@@ -1,4 +1,7 @@
-/** @file PieceFactory.cpp  @note SRS: §7.5 (Factory), FR-1.2. */
+/**
+ * @file PieceFactory.cpp
+ * @brief Factory method implementation mapping PieceType enums to concrete subclass instances.
+ */
 #include <tf/core/PieceFactory.hpp>
 
 #include <stdexcept>

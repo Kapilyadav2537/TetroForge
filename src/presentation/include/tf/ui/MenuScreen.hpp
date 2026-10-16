@@ -2,7 +2,6 @@
 /**
  * @file MenuScreen.hpp
  * @brief Main menu screen with keyboard and mouse navigation.
- * @note SRS: FR-3.1, §6.2 (MenuScreen), §6.3, §6.6.
  */
 #include <tf/ui/IScreenHost.hpp>
 #include <tf/ui/Screen.hpp>
@@ -10,23 +9,33 @@
 namespace tf::ui {
 
 /**
- * @brief Screen presenting the main menu (Play, High Scores, Quit).
+ * @brief Main menu screen providing options to Play, view High Scores, or Quit.
  */
 class MenuScreen final : public Screen {
 public:
-    /** @brief Constructs the menu screen attached to @p host. */
+    /**
+     * @brief Constructs the menu screen attached to the parent host context.
+     */
     explicit MenuScreen(IScreenHost& host);
 
-    /** @brief Handles keyboard navigation and mouse clicks. */
+    /**
+     * @brief Processes keyboard arrows, Enter/Space, Escape, and mouse clicks.
+     */
     void handleEvent(const sf::Event& event) override;
 
-    /** @brief Updates menu state. */
+    /**
+     * @brief Frame update hook (unused for static menu).
+     */
     void update(float dt) override;
 
-    /** @brief Draws the main menu using @p renderer. */
+    /**
+     * @brief Renders the menu background, title, and interactive buttons.
+     */
     void draw(IRenderer& renderer) override;
 
-    /** @brief Returns currently selected menu item index. */
+    /**
+     * @brief Returns the index of the currently highlighted menu item [0..2].
+     */
     [[nodiscard]] int selection() const noexcept { return selected_; }
 
 private:

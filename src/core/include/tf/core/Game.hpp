@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file Game.hpp
- * @brief Headless gameplay orchestration: actions, gravity, scoring and state.
- * @note SRS: FR-1.3--FR-2.5, §6.2 (Game), NFR-7.
+ * @brief Core gameplay loop orchestration: user actions, gravity ticks, piece spawning, and scoring.
  */
 #include <array>
 #include <cstddef>
@@ -15,7 +14,9 @@
 
 namespace tf::core {
 
-/** @brief Actions accepted by the gameplay layer. */
+/**
+ * @brief Discrete actions that mutate the game state.
+ */
 enum class Action : std::uint8_t {
     MoveLeft,
     MoveRight,
@@ -27,57 +28,131 @@ enum class Action : std::uint8_t {
     Pause,
 };
 
-/** @brief Lifecycle state of a game. */
-enum class GameState : std::uint8_t { Playing, Paused, GameOver };
+/**
+ * @brief Game lifecycle status.
+ */
+enum class GameState : std::uint8_t {
+    Playing,
+    Paused,
+    GameOver,
+};
 
-/** @brief Owns a board, the active/next pieces, RNG and gameplay counters. */
+/**
+ * @brief Coordinates the board, active piece, next piece queue, hold chamber, and score counters.
+ *
+ * This class is entirely headless and decoupled from GUI/audio rendering.
+ */
 class Game {
 public:
-    /** @brief Starts a new deterministic game using @p seed for piece selection. */
+    /**
+     * @brief Constructs a new deterministic game session using a specific PRNG seed.
+     * @param seed 32-bit seed for the 7-bag randomizer.
+     */
     explicit Game(std::uint32_t seed = 0xC0FFEEU);
 
-    /** @brief Applies one player action. */
+    /**
+     * @brief Executes a single gameplay action (movement, rotation, hold, drop, pause).
+     */
     void apply(Action action);
-    /** @brief Advances gravity by one row, locking and spawning when blocked. */
+
+    /**
+     * @brief Advances gravity by one row downward. Locks piece if blocked.
+     */
     void stepDown();
-    /** @brief Resets the board, counters and piece sequence using the original seed. */
+
+    /**
+     * @brief Resets the playfield, counters, and piece bag back to initial session state.
+     */
     void restart();
 
-    /** @brief Read-only board access for renderers and tests. */
+    /**
+     * @brief Immutable reference to the playfield board.
+     */
     [[nodiscard]] const Board& board() const noexcept { return board_; }
-    /** @brief Mutable board access for testing setups. */
+
+    /**
+     * @brief Mutable reference to the playfield board (used in test fixtures).
+     */
     [[nodiscard]] Board& board() noexcept { return board_; }
-    /** @brief The currently falling piece, or the last piece after game over. */
+
+    /**
+     * @brief Current active falling tetromino.
+     */
     [[nodiscard]] const Tetromino& activePiece() const noexcept { return *active_; }
-    /** @brief The piece that will spawn next. */
+
+    /**
+     * @brief Upcoming tetromino queued in the preview window.
+     */
     [[nodiscard]] const Tetromino& nextPiece() const noexcept { return *next_; }
-    /** @brief The held piece if any, or nullptr. */
+
+    /**
+     * @brief Currently held tetromino (or nullptr if hold chamber is empty).
+     */
     [[nodiscard]] const Tetromino* heldPiece() const noexcept { return held_.get(); }
-    /** @brief True if the player is allowed to hold a piece this turn. */
+
+    /**
+     * @brief Returns true if the player can use the hold action on the current piece.
+     */
     [[nodiscard]] bool canHold() const noexcept { return canHold_; }
-    /** @brief Returns a clone of the active piece positioned where it would land. */
+
+    /**
+     * @brief Computes and returns a ghost clone of the active piece positioned at the landing point.
+     */
     [[nodiscard]] std::unique_ptr<Tetromino> ghostPiece() const;
-    /** @brief Returns the landing position for the active piece. */
+
+    /**
+     * @brief Computes the bottom-most valid origin where the active piece lands.
+     */
     [[nodiscard]] Vec2i ghostPosition() const;
-    /** @brief Current lifecycle state. */
+
+    /**
+     * @brief Returns the current lifecycle state (Playing, Paused, or GameOver).
+     */
     [[nodiscard]] GameState state() const noexcept { return state_; }
-    /** @brief Current score. */
+
+    /**
+     * @brief Total accumulated score.
+     */
     [[nodiscard]] int score() const noexcept { return score_; }
-    /** @brief Current level, starting at one. */
+
+    /**
+     * @brief Current level (Level 1 + 1 level per 10 lines cleared).
+     */
     [[nodiscard]] int level() const noexcept { return lines_ / 10 + 1; }
-    /** @brief Number of cleared lines. */
+
+    /**
+     * @brief Total number of lines cleared so far.
+     */
     [[nodiscard]] int lines() const noexcept { return lines_; }
-    /** @brief Gravity interval in milliseconds for the current level. */
+
+    /**
+     * @brief Gravity step interval in milliseconds for the current level.
+     */
     [[nodiscard]] int fallIntervalMs() const noexcept;
-    /** @brief Number of lines cleared during the last lock step. */
+
+    /**
+     * @brief Number of lines cleared during the most recent lock action.
+     */
     [[nodiscard]] int lastClearedLines() const noexcept { return lastClearedLines_; }
-    /** @brief True if the previous action caused the active piece to lock. */
+
+    /**
+     * @brief Indicates whether the most recent action caused the piece to lock into the board.
+     */
     [[nodiscard]] bool lastActionLocked() const noexcept { return lastActionLocked_; }
-    /** @brief Directly sets line count for deterministic test scenarios. */
+
+    /**
+     * @brief Overrides line count (used in testing setups).
+     */
     void setLines(int lines) noexcept { lines_ = lines; }
-    /** @brief Directly sets score for test scenarios. */
+
+    /**
+     * @brief Overrides score (used in testing setups).
+     */
     void setScore(int score) noexcept { score_ = score; }
-    /** @brief Adds score corresponding to @p cleared lines at the current level. */
+
+    /**
+     * @brief Awards score points for clearing lines at the current level multiplier.
+     */
     void addScoreForLines(int cleared);
 
 private:

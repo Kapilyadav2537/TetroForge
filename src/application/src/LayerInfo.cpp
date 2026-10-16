@@ -1,4 +1,7 @@
-/** @file LayerInfo.cpp  @note SRS: §7.1. Week-1 scaffolding. */
+/**
+ * @file LayerInfo.cpp
+ * @brief Reports Application layer identifier for boundary testing.
+ */
 #include <tf/app/LayerInfo.hpp>
 
 namespace tf::app {

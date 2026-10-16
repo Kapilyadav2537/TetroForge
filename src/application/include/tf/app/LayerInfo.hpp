@@ -1,8 +1,7 @@
 #pragma once
 /**
  * @file LayerInfo.hpp
- * @brief Week-1 scaffolding for the Application layer.
- * @note SRS: §7.1. Deleted in Week 2.
+ * @brief Architectural metadata for the Application layer.
  */
 #include <string_view>
 
